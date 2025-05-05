@@ -1,0 +1,28 @@
+body{
+    border: 3px solid orange;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+
+/*Barra de navegacion*/
+.navbar{
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1.5em;
+    background-color: #377be0d4;
+}
+.navbar__nav{
+}
+
+.logo{
+    border: 5px solid purple;
+
+}
+
