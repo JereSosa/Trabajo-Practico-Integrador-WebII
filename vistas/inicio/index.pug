@@ -1,0 +1,31 @@
+extends ../layout
+
+block contenido
+  .text-center.mt-24
+    h1.text-5xl.font-bold.mb-12 Sistema HIS - Hospital Central
+
+    //– “Tengo turno” & “Derivación Médica” –//
+    div(class="flex flex-col md:flex-row items-center justify-center gap-6")
+      form(action="/proceso-ingreso" method="post")
+        input(type="hidden" name="motivo" value="cita")
+        button(
+          type="submit"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
+        ) Tengo turno
+
+      form(action="/proceso-ingreso" method="post")
+        input(type="hidden" name="motivo" value="derivacion")
+        button(
+          type="submit"
+          class="bg-green-500 hover:bg-green-600 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
+        ) Derivación Médica
+
+    //– Botón Emergencia más grande y pegado –//
+    div(class="mt-6 flex justify-center")
+      form(action="/proceso-ingreso" method="post")
+        input(type="hidden" name="motivo" value="emergencia")
+        button(
+          type="submit"
+          class="bg-red-500 hover:bg-red-600 text-white font-bold text-3xl py-6 px-12 rounded-xl shadow-2xl transition-transform transform hover:scale-105"
+        ) Emergencia
+

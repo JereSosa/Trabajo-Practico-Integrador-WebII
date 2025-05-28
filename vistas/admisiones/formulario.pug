@@ -1,23 +1,39 @@
 extends ../layout
 
 block contenido
-  .max-w-xl.mx-auto.bg-white.shadow-md.rounded.p-6
+  //– Agregamos mt-20 para separar del tope y posición relative para la “X” –//
+  .max-w-xl.mx-auto.bg-white.shadow-md.rounded.p-6.text-gray-900.relative.mt-20
+    //– Botón cerrar vuelve a /inicio –//
+    a(href="/inicio" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700")
+      i(class="fas fa-times text-xl")
+
     h1.text-2xl.font-bold.mb-4 Admisión de Paciente
 
     form(action="/admisiones" method="post" class="space-y-4")
+      // Nombre
       div
         label.block.text-sm.font-medium Nombre:
-        input(type="text" name="nombre" required class="w-full border p-2 rounded")
+        input(type="text" name="nombre" required class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400")
+
+      // DNI
       div
         label.block.text-sm.font-medium DNI:
-        input(type="text" name="dni" required class="w-full border p-2 rounded")
+        input(type="text" name="dni" required class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400")
+
+      // Sexo
       div
         label.block.text-sm.font-medium Sexo:
-        select(name="sexo" required class="w-full border p-2 rounded")
+        select(name="sexo" required class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400")
+          option(value="" disabled selected) Seleccioná…
           option(value="M") Masculino
           option(value="F") Femenino
+
+      // Motivo de internación
       div
         label.block.text-sm.font-medium Motivo de Internación:
-        textarea(name="motivo" rows="3" required class="w-full border p-2 rounded")
+        textarea(name="motivo" rows="3" required class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400")
 
-      button(type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600") Registrar
+      // Botón de envío
+      div
+        button(type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-lg py-2 px-6 rounded shadow transition-all") Registrar
+
