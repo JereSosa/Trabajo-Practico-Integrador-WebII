@@ -1,9 +1,12 @@
 doctype html
-html
+html(lang="es")
   head
-    title Sistema HIS
+    // → Cabecera HTTP equivalente para asegurar UTF-8
+    meta(http-equiv="Content-Type" content="text/html; charset=UTF-8")
+    // → Declaración HTML estándar
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Sistema HIS
     //– Tailwind CSS –//
     link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css")
     //– FontAwesome –//
@@ -16,7 +19,6 @@ html
       body { font-family: 'Poppins', sans-serif; }
 
   body(class="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white relative overflow-x-hidden")
-
     //– ICONO LOGIN –//
     div(class="absolute top-0 right-0 mr-2 mt-0")
       button#login-toggle(type="button" class="flex items-center space-x-2 focus:outline-none")
@@ -25,26 +27,20 @@ html
 
     //– MODAL LOGIN –//
     div#login-modal(class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden")
-      //– text-gray-900 hace el texto oscuro dentro del modal –//
       div(class="bg-white rounded-lg w-96 p-6 relative z-60 text-gray-900")
-        //– Close –//
         button#login-close(type="button" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700")
           i(class="fas fa-times")
-
-        //– PESTAÑAS –//
         div(class="flex border-b mb-4")
           button#tab-paciente(type="button" class="flex-1 py-2 text-center border-b-2 border-blue-500 font-semibold") Paciente
           button#tab-staff(type="button" class="flex-1 py-2 text-center text-gray-600") Staff Médico
 
-        //– FORMULARIO PACIENTE –//
         form#form-paciente(action="/login/paciente" method="post" class="space-y-4")
-          label.block.mb-1.correo Email:
+          label.block.mb-1 Email:
           input(type="email" name="email" required class="w-full border p-2 rounded")
           label.block.mb-1 Contraseña:
           input(type="password" name="password" required class="w-full border p-2 rounded")
           button(type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded") Entrar como Paciente
 
-        //– FORMULARIO STAFF –//
         form#form-staff(action="/login/staff" method="post" class="space-y-4 hidden")
           label.block.mb-1 Usuario:
           input(type="text" name="usuario" required class="w-full border p-2 rounded")
@@ -52,44 +48,32 @@ html
           input(type="password" name="password" required class="w-full border p-2 rounded")
           button(type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded") Entrar como Staff Médico
 
-    //– CONTENIDO PRINCIPAL –//
     block contenido
 
-    //– SCRIPT PARA TOGGLES –//
     script.
       document.addEventListener('DOMContentLoaded', function(){
-        const toggle = document.getElementById('login-toggle');
-        const modal = document.getElementById('login-modal');
-        const closeBtn = document.getElementById('login-close');
-        const tabPac = document.getElementById('tab-paciente');
-        const tabStaff = document.getElementById('tab-staff');
-        const formPac = document.getElementById('form-paciente');
+        const toggle    = document.getElementById('login-toggle');
+        const modal     = document.getElementById('login-modal');
+        const closeBtn  = document.getElementById('login-close');
+        const tabPac    = document.getElementById('tab-paciente');
+        const tabStaff  = document.getElementById('tab-staff');
+        const formPac   = document.getElementById('form-paciente');
         const formStaff = document.getElementById('form-staff');
 
-        // Abrir modal
-        toggle.addEventListener('click', function(e){
+        toggle.addEventListener('click', e => {
           e.stopPropagation();
           modal.classList.remove('hidden');
         });
-
-        // Cerrar modal
         closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
-
-        // Click fuera cierra
-        modal.addEventListener('click', function(e){
-          if (e.target === modal) {
-            modal.classList.add('hidden');
-          }
+        modal.addEventListener('click', e => {
+          if (e.target === modal) modal.classList.add('hidden');
         });
 
-        // Cambiar a pestaña Paciente
         tabPac.addEventListener('click', () => {
           tabPac.classList.add('border-blue-500','font-semibold'); tabPac.classList.remove('text-gray-600');
           tabStaff.classList.remove('border-blue-500','font-semibold'); tabStaff.classList.add('text-gray-600');
           formPac.classList.remove('hidden'); formStaff.classList.add('hidden');
         });
-
-        // Cambiar a pestaña Staff
         tabStaff.addEventListener('click', () => {
           tabStaff.classList.add('border-blue-500','font-semibold'); tabStaff.classList.remove('text-gray-600');
           tabPac.classList.remove('border-blue-500','font-semibold'); tabPac.classList.add('text-gray-600');

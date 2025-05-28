@@ -2,13 +2,12 @@ extends ../layout
 
 block contenido
   .max-w-2xl.mx-auto.bg-white.shadow-md.rounded.p-6.text-gray-900.relative.mt-20
-    //– Botón “X” –//
     a(href="/inicio" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700")
       i.fas.fa-times.text-xl
 
     h1.text-2xl.font-bold.mb-6 Sacar Turno
 
-    //– Toggle –//
+    // Toggle Nuevo / Existente
     .mb-6.flex.space-x-8
       label.cursor-pointer
         input#radio-nuevo(type="radio" name="usuario" value="nuevo" class="mr-2")
@@ -17,89 +16,59 @@ block contenido
         input#radio-existente(type="radio" name="usuario" value="existente" class="mr-2")
         | Usuario existente
 
-    //– Formulario existente –//
+    // Formulario Usuario existente (buscador)
     form#form-existente(action="/buscar-paciente" method="get" class="space-y-4")
-      input(
-        type="text" name="busqueda" placeholder="Buscar por DNI, apellido o nombre"
-        class="w-full border border-gray-300 p-2 rounded text-gray-900 placeholder-gray-600 focus:ring-2 focus:ring-blue-400"
+      select(
+        name="paciente_id" required
+        class="w-full border border-gray-300 p-2 rounded text-gray-900 focus:ring-2 focus:ring-blue-400"
       )
+        option(value="" disabled selected) Seleccionar paciente…
+        each p in pacientes
+          option(value=p.id)= p.nombre
       button(
         type="submit"
         class="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-lg py-2 px-6 rounded"
-      ) Buscar
+      ) Seleccionar
 
-    //– Formulario nuevo –//
+    // Formulario Nuevo usuario
     form#form-nuevo(action="/turno-nuevo" method="post" class="space-y-4 hidden")
       div(class="grid grid-cols-1 md:grid-cols-2 gap-4")
-        // Nombre completo
         div
           label.block.text-sm.font-medium Nombre completo:
-          input(
-            type="text" name="nombre" placeholder="Ej: Juan Pérez" required
-            class="w-full border border-gray-300 p-2 rounded text-gray-900 placeholder-gray-600 focus:ring-2 focus:ring-blue-400"
-          )
-        // Dirección
+          input(type="text" name="nombre" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400")
         div
           label.block.text-sm.font-medium Dirección:
-          input(
-            type="text" name="direccion" placeholder="Ej: Calle Falsa 123" required
-            class="w-full border border-gray-300 p-2 rounded text-gray-900 placeholder-gray-600 focus:ring-2 focus:ring-blue-400"
-          )
-        // Teléfono
+          input(type="text" name="direccion" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400")
         div
           label.block.text-sm.font-medium Teléfono:
-          input(
-            type="tel" name="telefono" placeholder="Ej: 11-1234-5678" required
-            class="w-full border border-gray-300 p-2 rounded text-gray-900 placeholder-gray-600 focus:ring-2 focus:ring-blue-400"
-          )
-        // Contacto de Emergencia
+          input(type="tel" name="telefono" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400")
         div
           label.block.text-sm.font-medium Contacto de Emergencia:
-          input(
-            type="tel" name="contacto_emergencia" placeholder="Ej: 11-8765-4321" required
-            class="w-full border border-gray-300 p-2 rounded text-gray-900 placeholder-gray-600 focus:ring-2 focus:ring-blue-400"
-          )
+          input(type="tel" name="contacto_emergencia" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400")
 
-      // Fecha y Obra Social
       div(class="grid grid-cols-1 md:grid-cols-2 gap-4")
         div
           label.block.text-sm.font-medium Fecha de Nacimiento:
-          input(
-            type="date" name="fecha_nacimiento" required
-            class="w-full border border-gray-300 p-2 rounded text-gray-900 focus:ring-2 focus:ring-blue-400"
-          )
+          input(type="date" name="fecha_nacimiento" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400")
         div
           label.block.text-sm.font-medium Obra Social:
-          input(
-            type="text" name="obra_social" placeholder="Ej: PAMI"
-            class="w-full border border-gray-300 p-2 rounded text-gray-900 placeholder-gray-600 focus:ring-2 focus:ring-blue-400"
-          )
+          input(type="text" name="obra_social" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400")
 
-      // Sexo y Motivo de Turno
       div
         label.block.text-sm.font-medium Sexo:
-        select(
-          name="sexo" required
-          class="w-full border border-gray-300 p-2 rounded text-gray-900 focus:ring-2 focus:ring-blue-400"
-        )
+        select(name="sexo" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400")
           option(value="" disabled selected) Seleccioná…
           option(value="M") Masculino
           option(value="F") Femenino
+
       div
         label.block.text-sm.font-medium Motivo del Turno:
-        textarea(
-          name="motivo_turno" rows="3" placeholder="Describa brevemente su motivo" required
-          class="w-full border border-gray-300 p-2 rounded text-gray-900 placeholder-gray-600 focus:ring-2 focus:ring-blue-400"
-        )
+        textarea(name="motivo_turno" rows="3" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400")
 
-      // Botón enviar
       div.text-right
-        button(
-          type="submit"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-lg py-2 px-6 rounded"
-        ) Registrar y Sacar Turno
+        button(type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-lg py-2 px-6 rounded")
+          Registrar y Sacar Turno
 
-    //– Script toggle inicial y cambios –//
     script.
       document.addEventListener('DOMContentLoaded', () => {
         const rNuevo = document.getElementById('radio-nuevo');
@@ -119,5 +88,6 @@ block contenido
 
         rNuevo.addEventListener('change', actualizar);
         rExist.addEventListener('change', actualizar);
-        actualizar(); // ← Inicializa en base al radio chequeado
+        actualizar();
       });
+
