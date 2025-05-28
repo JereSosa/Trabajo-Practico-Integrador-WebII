@@ -1,0 +1,47 @@
+extends ../layout
+
+block contenido
+    .max-w-2xl.mx-auto.bg-white.shadow-md.rounded.p-6.text-gray-900.relative.mt-20
+        a(href="/inicio" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700")
+            i.fas.fa-times.text-xl
+
+        h1.text-2xl.font-bold.mb-6 Derivación Médica
+
+        form(action="/derivacion-nuevo" method="post" class="space-y-4")
+            //– Paciente registrado –//
+            div
+                label.block.text-sm.font-medium Paciente:
+                select(
+                    name="paciente_id" required
+                    class="w-full border border-gray-300 p-2 rounded text-gray-900 focus:ring-2 focus:ring-green-400"
+                )
+                    option(value="" disabled selected) Seleccionar paciente…
+                    //– Aquí iteras tus pacientes del backend –//
+                    option(value="1") Juan Pérez – DNI 12345678
+                    option(value="2") María López – DNI 87654321
+
+            //– Médico derivante –//
+            div
+                label.block.text-sm.font-medium Médico derivante:
+                select(
+                    name="medico" required
+                    class="w-full border border-gray-300 p-2 rounded text-gray-900 focus:ring-2 focus:ring-green-400"
+                )
+                    option(value="" disabled selected) Seleccionar médico…
+                    option(value="dr-juan") Dr. Juan Pérez
+                    option(value="dra-maria") Dra. María López
+
+            //– Motivo de derivación –//
+            div
+                label.block.text-sm.font-medium Motivo de derivación:
+                textarea(
+                    name="motivo_derivacion" rows="3" required
+                    class="w-full border border-gray-300 p-2 rounded text-gray-900 placeholder-gray-600 focus:ring-2 focus:ring-green-400"
+                )
+
+            //– Botón enviar –//
+            div.text-right
+                button(
+                    type="submit"
+                    class="bg-green-500 hover:bg-green-600 text-white font-semibold text-lg py-2 px-6 rounded"
+                ) Registrar derivación
