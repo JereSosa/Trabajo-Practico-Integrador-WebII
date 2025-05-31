@@ -5,8 +5,10 @@ html(lang="es")
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title Sistema HIS
+    // TailwindCSS y FontAwesome
     link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css")
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    // Google Fonts
     link(rel="preconnect" href="https://fonts.googleapis.com")
     link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
     link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap")
@@ -14,62 +16,84 @@ html(lang="es")
       body { font-family: 'Poppins', sans-serif; }
 
   body(class="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white relative overflow-x-hidden")
-
-    //– ICONO LOGIN –//
-    div(class="absolute top-0 right-0 mr-2 mt-0")
+    //====================================================================================
+    // ICONO LOGIN (siempre aparece)
+    //====================================================================================
+    div.absolute.top-0.right-0.m-2
       button#login-toggle(type="button" class="flex items-center space-x-2 focus:outline-none")
         span.font-semibold.text-white Ingresar
-        i(class="fas fa-user-circle text-white text-3xl")
+        i.fas.fa-user-circle.text-white.text-3xl
 
-    //– MENSAJES DE ÉXITO Y ERROR –//
+    //====================================================================================
+    // MENSAJES DE ÉXITO / ERROR (si existen)
+    //====================================================================================
     if success || error
-      div(id="alerta-mensaje" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50" style="min-width:400px")
+      div(
+        id="aviso-mensaje"
+        class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50"
+        style="min-width:400px;"
+      )
         if success == 'staff'
-          div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce") ¡Registro de staff exitoso!
+          div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
+            | ¡Registro de staff exitoso!
         else if success == 'paciente'
-          div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce") ¡Registro de paciente exitoso!
+          div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
+            | ¡Registro de paciente exitoso!
         if error == 'usuario_existente'
-          div(class="bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg") Usuario o email ya registrado.
+          div(class="bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg")
+            | Usuario o email ya registrado.
         else if error == 'codigo'
-          div(class="bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg") Código de registro incorrecto.
+          div(class="bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg")
+            | Código de registro incorrecto.
         else if error
-          div(class="bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg") #{error}
+          div(class="bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg")
+            | #{error}
 
-
-    //– MODAL LOGIN –//
-    div#login-modal(class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden")
+    //====================================================================================
+    // MODAL LOGIN (backdrop z-50, contenido z-60)
+    //====================================================================================
+    div#login-modal(class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden")
       div(class="bg-white rounded-lg w-96 p-6 relative z-60 text-gray-900")
         button#login-close(type="button" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700")
-          i(class="fas fa-times")
+          i.fas.fa-times
+        //– TABS ––
         div(class="flex border-b mb-4")
-          button#tab-paciente(type="button" class="flex-1 py-2 text-center border-b-2 border-blue-500 font-semibold") Paciente
-          button#tab-staff(type="button" class="flex-1 py-2 text-center text-gray-600") Staff Médico
+          button#tab-paciente(type="button" class="flex-1 py-2 text-center border-b-2 border-blue-500 font-semibold")
+            | Paciente
+          button#tab-staff(type="button" class="flex-1 py-2 text-center text-gray-600")
+            | Staff Médico
 
-        //– Formulario Paciente –//
+        //– FORMULARIO PACIENTE ––
         form#form-paciente(action="/login/paciente" method="post" class="space-y-4")
           label.block.mb-1 Email:
           input(type="email" name="email" required class="w-full border p-2 rounded")
           label.block.mb-1 Contraseña:
           input(type="password" name="password" required class="w-full border p-2 rounded")
-          button(type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded") Entrar como Paciente
+          button(type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded")
+            | Entrar como Paciente
           div.text-center.mt-2
-            a#enlace-registro-paciente(href="#" class="text-blue-600 hover:underline cursor-pointer") ¿Eres nuevo? Registrate
+            a#enlace-registro-paciente(href="#" class="text-blue-600 hover:underline")
+              | ¿Eres nuevo? Regístrate
 
-        //– Formulario Staff –//
+        //– FORMULARIO STAFF ––
         form#form-staff(action="/login/staff" method="post" class="space-y-4 hidden")
           label.block.mb-1 Usuario:
           input(type="text" name="usuario" required class="w-full border p-2 rounded")
           label.block.mb-1 Contraseña:
           input(type="password" name="password" required class="w-full border p-2 rounded")
-          button(type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded") Entrar como Staff Médico
+          button(type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded")
+            | Entrar como Staff Médico
           div.text-center.mt-2
-            a#enlace-registro-staff(href="#" class="text-blue-600 hover:underline cursor-pointer") ¿Eres médico nuevo? Registrarme
+            a#enlace-registro-staff(href="#" class="text-blue-600 hover:underline")
+              | ¿Eres médico nuevo? Regístrate
 
-    //– MODAL REGISTRO STAFF –//
-    div#registro-staff-modal(class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden")
+    //====================================================================================
+    // MODAL REGISTRO STAFF
+    //====================================================================================
+    div#registro-staff-modal(class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden")
       div(class="bg-white rounded-lg w-96 p-6 relative z-60 text-gray-900")
         button#registro-staff-close(type="button" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700")
-          i(class="fas fa-times")
+          i.fas.fa-times
         h2.text-2xl.font-bold.mb-4.text-blue-700 Registro Staff Médico
         form(action="/registro-staff" method="post" class="space-y-4")
           label.block.mb-1 Nombre:
@@ -84,13 +108,16 @@ html(lang="es")
           input(type="text" name="especialidad" class="w-full border p-2 rounded")
           label.block.mb-1 Código de registro:
           input(type="password" name="codigo_registro" required class="w-full border p-2 rounded")
-          button(type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded") Registrarme
+          button(type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded")
+            | Registrarme
 
-    //– MODAL REGISTRO PACIENTE –//
-    div#registro-paciente-modal(class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden")
+    //====================================================================================
+    // MODAL REGISTRO PACIENTE
+    //====================================================================================
+    div#registro-paciente-modal(class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden")
       div(class="bg-white rounded-lg w-96 p-6 relative z-60 text-gray-900")
         button#registro-paciente-close(type="button" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700")
-          i(class="fas fa-times")
+          i.fas.fa-times
         h2.text-2xl.font-bold.mb-4.text-blue-700 Registro de Paciente
         form(action="/registro-paciente" method="post" class="space-y-4")
           label.block.mb-1 Nombre:
@@ -103,16 +130,70 @@ html(lang="es")
           input(type="text" name="telefono" required class="w-full border p-2 rounded")
           label.block.mb-1 Sexo:
           select(name="sexo" required class="w-full border p-2 rounded")
-            option(value="" disabled selected) Selecciona...
+            option(value="" disabled selected) Selecciona…
             option(value="M") Masculino
             option(value="F") Femenino
-          button(type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded") Registrarme
+          button(type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded")
+            | Registrarme
 
+    //====================================================================================
+    // SI showSidebar ES TRUE, ENTONCES INCLUIMOS EL SIDEBAR
+    // (sino, en pantallas como “/inicio” no se muestra)
+    //====================================================================================
+    if showSidebar
+      aside#sidebar.fixed.top-0.left-0.h-full.w-60.bg-blue-900.p-6.text-white.z-50.shadow-2xl.transform.-translate-x-full.transition-all
+        button#close-sidebar.text-2xl.absolute.top-4.right-4(type="button") &times;
+        h2.text-xl.font-bold.mb-8 Menú
+
+        //– Link al CRUD de Alas ––
+        a(
+          href="/alas"
+          class="block mb-4 py-2 px-3 bg-indigo-500 hover:bg-indigo-700 rounded text-center text-white font-semibold shadow"
+        ) Administrar Alas
+
+        //– Botones de filtro de camas ––
+        button.sidebar-btn(
+          type="button"
+          data-filter="all"
+          class="block mb-2 py-2 px-3 bg-blue-500 hover:bg-blue-700 rounded text-center text-white font-semibold"
+        ) Todas las camas
+
+        button.sidebar-btn(
+          type="button"
+          data-filter="libres"
+          class="block mb-2 py-2 px-3 bg-green-500 hover:bg-green-700 rounded text-center text-white font-semibold"
+        ) Camas libres
+
+        button.sidebar-btn(
+          type="button"
+          data-filter="ocupadas"
+          class="block mb-2 py-2 px-3 bg-pink-500 hover:bg-pink-600 rounded text-center text-white font-semibold"
+        ) Ocupadas
+
+        button.sidebar-btn(
+          type="button"
+          data-filter="higienizando"
+          class="block mb-2 py-2 px-3 bg-yellow-400 hover:bg-yellow-500 rounded text-center text-gray-900 font-semibold"
+        ) Higienizando
+
+      // Overlay invisible hasta que se abra sidebar
+      div#sidebar-overlay.fixed.inset-0.z-40.bg-black.bg-opacity-30.hidden
+
+    //====================================================================================
+    // Aquí irá el título de cada vista (opcional)
+    //====================================================================================
+    block titulo
+    //====================================================================================
+    // Aquí irá el contenido específico de cada vista (“block contenido”)
+    //====================================================================================
     block contenido
 
+    //====================================================================================
+    // SCRIPTS para abrir/cerra modales y sidebar, y autocierre de avisos
+    //====================================================================================
     script.
       document.addEventListener('DOMContentLoaded', function(){
-        // Referencias
+        // Toggle login modal
         const toggle      = document.getElementById('login-toggle');
         const modal       = document.getElementById('login-modal');
         const closeBtn    = document.getElementById('login-close');
@@ -121,12 +202,6 @@ html(lang="es")
         const formPac     = document.getElementById('form-paciente');
         const formStaff   = document.getElementById('form-staff');
 
-        const registroStaffModal = document.getElementById('registro-staff-modal');
-        const registroStaffClose = document.getElementById('registro-staff-close');
-        const enlaceRegStaff     = document.getElementById('enlace-registro-staff');
-        const enlaceRegPaciente  = document.getElementById('enlace-registro-paciente');
-
-        // Login modal
         toggle.addEventListener('click', e => {
           e.stopPropagation();
           modal.classList.remove('hidden');
@@ -136,45 +211,63 @@ html(lang="es")
           if (e.target === modal) modal.classList.add('hidden');
         });
 
-        // Tabs
+        // Cambiar pestañas dentro del modal
         tabPac.addEventListener('click', () => {
-          tabPac.classList.add('border-blue-500','font-semibold'); tabPac.classList.remove('text-gray-600');
-          tabStaff.classList.remove('border-blue-500','font-semibold'); tabStaff.classList.add('text-gray-600');
-          formPac.classList.remove('hidden'); formStaff.classList.add('hidden');
+          tabPac.classList.add('border-blue-500','font-semibold');
+          tabPac.classList.remove('text-gray-600');
+          tabStaff.classList.remove('border-blue-500','font-semibold');
+          tabStaff.classList.add('text-gray-600');
+          formPac.classList.remove('hidden');
+          formStaff.classList.add('hidden');
         });
         tabStaff.addEventListener('click', () => {
-          tabStaff.classList.add('border-blue-500','font-semibold'); tabStaff.classList.remove('text-gray-600');
-          tabPac.classList.remove('border-blue-500','font-semibold'); tabPac.classList.add('text-gray-600');
-          formStaff.classList.remove('hidden'); formPac.classList.add('hidden');
+          tabStaff.classList.add('border-blue-500','font-semibold');
+          tabStaff.classList.remove('text-gray-600');
+          tabPac.classList.remove('border-blue-500','font-semibold');
+          tabPac.classList.add('text-gray-600');
+          formStaff.classList.remove('hidden');
+          formPac.classList.add('hidden');
         });
 
-        // REGISTRO STAFF MODAL
-        enlaceRegStaff.addEventListener('click', e => {
+        // Abrir/cerra modales de registro STAFF/PACIENTE
+        document.getElementById('enlace-registro-staff').addEventListener('click', e => {
           e.preventDefault();
-          registroStaffModal.classList.remove('hidden');
+          document.getElementById('registro-staff-modal').classList.remove('hidden');
         });
-        registroStaffClose.addEventListener('click', () => registroStaffModal.classList.add('hidden'));
-        registroStaffModal.addEventListener('click', e => {
-          if (e.target === registroStaffModal) registroStaffModal.classList.add('hidden');
+        document.getElementById('registro-staff-close').addEventListener('click', () => {
+          document.getElementById('registro-staff-modal').classList.add('hidden');
         });
-
-        // REGISTRO PACIENTE MODAL
-        enlaceRegPaciente.addEventListener('click', e => {
+        document.getElementById('enlace-registro-paciente').addEventListener('click', e => {
           e.preventDefault();
           document.getElementById('registro-paciente-modal').classList.remove('hidden');
         });
         document.getElementById('registro-paciente-close').addEventListener('click', () => {
           document.getElementById('registro-paciente-modal').classList.add('hidden');
         });
-        document.getElementById('registro-paciente-modal').addEventListener('click', e => {
-          if (e.target === document.getElementById('registro-paciente-modal'))
-            document.getElementById('registro-paciente-modal').classList.add('hidden');
-        });
 
-        // Ocultar mensajes de éxito/error tras 3 segundos
-        setTimeout(() => {
-          const msg = document.querySelector('.fixed.top-5.left-1\\/2');
-          if(msg) msg.style.display = 'none';
-        }, 3000);
+        // Auto-cerrar el aviso después de 3 segundos
+        const aviso = document.getElementById('aviso-mensaje');
+        if (aviso) setTimeout(() => aviso.classList.add('hidden'), 3000);
+
+        // Si existe sidebar: activamos la lógica de abrir/cerrar
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const closeSidebar = document.getElementById('close-sidebar');
+
+        if (menuBtn && sidebar && closeSidebar && sidebarOverlay) {
+          function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+          }
+          function closeSidebarFn() {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
+          }
+          menuBtn.addEventListener('click', openSidebar);
+          closeSidebar.addEventListener('click', closeSidebarFn);
+          sidebarOverlay.addEventListener('click', closeSidebarFn);
+        }
 
       });
+

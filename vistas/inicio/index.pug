@@ -4,7 +4,7 @@ block contenido
   .text-center.mt-24
     h1.text-5xl.font-bold.mb-12 Sistema HIS - Hospital Central
 
-    //– “Tengo turno” & “Derivación Médica” –//
+    //– Aquí cambiamos .flex.flex-col.md:flex-row por un div con class= … ––
     div(class="flex flex-col md:flex-row items-center justify-center gap-6")
       form(action="/proceso-ingreso" method="post")
         input(type="hidden" name="motivo" value="cita")
@@ -24,7 +24,6 @@ block contenido
           i.fas.fa-user-md.mr-2
           | Derivación Médica
 
-    //– Botón Emergencia más grande y pegado –//
     div(class="mt-8 flex justify-center")
       form(action="/emergencia" method="get" class="w-full")
         button(
@@ -33,6 +32,5 @@ block contenido
         )
           i.fas.fa-ambulance
           | EMERGENCIA
-
 
 

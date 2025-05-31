@@ -1,0 +1,67 @@
+extends ../layout
+
+block titulo
+  h1.text-3xl.font-bold.text-white Gestión de Alas
+
+block contenido
+  div(class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6")
+    //– Mensajes de éxito/error si vienen por querystring
+    if success || error
+    div(
+      id="aviso-mensaje"
+      class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50"
+      style="min-width:400px;"
+    )
+      if success == 'ala_creada'
+        div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
+          | Ala creada exitosamente.
+      else if success == 'ala_modificada'
+        div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
+          | Ala modificada exitosamente.
+      else if success == 'ala_eliminada'
+        div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
+          | Ala eliminada exitosamente.
+      if error
+        div(class="bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg")
+          | #{error}
+
+  //––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  //– Formulario para CREAR NUEVA “Ala”
+  //––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  div(class="bg-white bg-opacity-10 p-6 rounded-lg shadow-lg mb-8")
+    form(action="/alas" method="post" class="space-y-4")
+      label.block.mb-1.font-semibold.text-white Nombre del Ala:
+      input(type="text" name="nombre" required class="w-full border p-2 rounded bg-gray-900 text-white")
+
+      //– SOLO nombre; ya no hay campo “cantidad de camas”
+      button(type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded")
+        | Crear Ala
+
+  //––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  //– Listado de alas existentes con acciones de “editar” y “eliminar”
+  //––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  if alas.length
+    table.w-full.bg-gray-100.text-gray-800.rounded-lg.shadow-lg
+      thead
+        tr.bg-gray-200
+          th.text-left.px-4.py-2 ID
+          th.text-left.px-4.py-2 Nombre
+          th.text-center.px-4.py-2 Acciones
+      tbody
+        each ala in alas
+          tr
+            td.px-4.py-2 #{ala.id}
+            td.px-4.py-2 #{ala.nombre}
+            td.px-4.py-2.text-center
+              //– Formulario para editar nombre del ala –
+              form(action=`/alas/${ala.id}/edit` method="post" class="inline-block mr-2")
+                input(type="text" name="nombre" value=ala.nombre required class="border p-1 rounded bg-white")
+                button(type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-2 py-1 rounded")
+                  | Guardar
+
+              //– Botón para eliminar (submit a /alas/:id/delete) –
+              form(action=`/alas/${ala.id}/delete` method="post" class="inline-block")
+                button(type="submit" class="bg-red-500 hover:bg-red-600 text-white text-sm px-2 py-1 rounded" onclick="return confirm('¿Seguro que deseas eliminar esta ala?');")
+                  | Eliminar
+  else
+    p.text-center.text-gray-300 No hay alas registradas. ¡Crea la primera!  
