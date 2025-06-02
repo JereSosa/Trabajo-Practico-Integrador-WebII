@@ -33,9 +33,9 @@ block contenido
                 | Emergencia
             td.px-4.py-2
               if p.cama_id
-                | Cama #{p.cama_id}
+                | Cama #{p.cama_id} – Habitación #{p.habitacion} – Ala #{p.ala}
               else
-                span.text-yellow-300 Sin cama
+                span.text-yellow-300 Sin cama asignada
             td.px-4.py-2
               a(href=`/pacientes/${p.id}/editar` class="text-blue-400 hover:underline mr-2") Editar
               form(method="post" action=`/pacientes/${p.id}/eliminar` style="display:inline")

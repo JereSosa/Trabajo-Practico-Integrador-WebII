@@ -1,14 +1,13 @@
 extends ../layout
 
 block contenido
-  header.flex.items-center.justify-between.px-6.py-4.bg-gray-800.shadow-md.mb-8
-    button#menu-btn.text-3xl.text-white(type="button")
+  header.flex.items-center.justify-center.px-6.py-4.bg-gray-800.shadow-md.mb-8.relative
+    button#menu-btn.absolute.left-6.text-3xl.text-white(type="button")
       i.fas.fa-bars
     h1.text-3xl.font-bold.text-white Gestión de Habitaciones
-    span
 
   main.px-6
-    div(class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10")
+    div.grid.gap-10(class="grid-cols-1 md:grid-cols-2 lg:grid-cols-3")
       each ala in alas
         section.bg-white.rounded-2xl.shadow-2xl.p-6.flex.flex-col.gap-6
           h2.text-2xl.font-extrabold.mb-2.text-blue-900 #{ala.nombre}
@@ -24,26 +23,27 @@ block contenido
 
                 .flex.flex-wrap.gap-2
                   each cama in habitacion.camas
-                    - const color = cama.estado === 'ocupada' ? 'bg-red-400' : cama.estado === 'higienizando' ? 'bg-yellow-300' : 'bg-green-400';
-                    .cama-card.flex.flex-col.items-center.justify-center.w-24.h-24.rounded-xl.shadow-xl.cursor-pointer.relative.transition.text-white.text-center.text-xs.font-semibold.p-1(
-                      class=`${color} hover:scale-105`
-                      data-id=cama.id
-                      data-estado=cama.estado
-                    )
-                      span.font-bold.text-lg #{cama.id}
-                      i.fas.fa-bed.text-2xl.my-1
-                      span.text-xs.break-words.max-w-full.text-center #{cama.estado}
-
+                    if cama.id && cama.estado
+                      - const color = cama.estado === 'ocupada' ? 'bg-red-400' : cama.estado === 'higienizando' ? 'bg-yellow-300' : 'bg-green-400';
+                      .cama-card.flex.flex-col.items-center.justify-center.w-24.h-24.rounded-xl.shadow-xl.cursor-pointer.relative.transition.text-white.text-center.text-xs.font-semibold.p-1(
+                        class=`${color} hover:scale-105`
+                        data-id=cama.id
+                        data-estado=cama.estado
+                      )
+                        span.font-bold.text-lg #{cama.id}
+                        i.fas.fa-bed.text-2xl.my-1
+                        span.text-xs.break-words.max-w-full.text-center #{cama.estado}
           else
             .text-center.text-gray-600 No hay habitaciones creadas todavía.
             button.add-habitacion-btn.bg-indigo-400.text-white.rounded.px-2.py-1.shadow.mt-2(type="button" data-ala=ala.id) + Crear Habitación
 
-  // Modal para editar cama
+  // Modal
   div#modal.hidden.fixed.inset-0.bg-black.bg-opacity-50.flex.items-center.justify-center.z-50
     div(style="width: 90%;" class="bg-white text-gray-900 rounded-xl shadow-xl max-w-md p-6 relative")
       h2.text-xl.font-bold.mb-4 Detalle de Cama
       form(method="POST" id="modal-form")
         input(type="hidden" name="id" id="modal-id")
+        input(type="hidden" name="sexo" id="modal-sexo")
 
         label.text-sm.font-semibold Estado
         select#modal-estado(name="estado" class="w-full border rounded px-2 py-1 mb-4 text-black")
@@ -51,21 +51,29 @@ block contenido
           option(value="ocupada") Ocupada
           option(value="higienizando") Higienizando
 
-        label.text-sm.font-semibold Sexo
-        select#modal-sexo(name="sexo" class="w-full border rounded px-2 py-1 mb-4 text-black")
-          option(value="") --
-          option(value="M") M
-          option(value="F") F
+        label.text-sm.font-semibold Ficha del Paciente
 
         div#paciente-info.hidden.mb-4
           h3.font-semibold.mb-1 Información del Paciente
           ul.text-sm.text-gray-700
-            li strong Nombre:  span#paciente-nombre
-            li strong DNI:  span#paciente-dni
-            li strong Tipo de Sangre:  span#paciente-sangre
-            li strong Edad:  span#paciente-edad
-            li strong Sexo:  span#paciente-sexo
-            li strong Motivo:  span#paciente-motivo
+            li
+              strong Nombre:
+              span#paciente-nombre.ml-1
+            li
+              strong DNI:
+              span#paciente-dni.ml-1
+            li
+              strong Tipo de Sangre:
+              span#paciente-sangre.ml-1
+            li
+              strong Edad:
+              span#paciente-edad.ml-1
+            li
+              strong Sexo:
+              span#paciente-sexo.ml-1
+            li
+              strong Motivo:
+              span#paciente-motivo.ml-1
 
         div#paciente-select.mb-4
           label.text-sm.font-semibold Seleccionar Paciente
@@ -77,14 +85,16 @@ block contenido
         div.flex.justify-between.mt-4
           button(type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded") Guardar
           button(type="button" onclick="closeModal()" class="text-gray-600 hover:underline") Cancelar
+
       form(method="POST" id="delete-form" class="mt-2")
         button(type="submit" class="bg-red-500 hover:bg-red-600 text-white w-full px-4 py-2 rounded mt-2") 🗑️ Eliminar
 
-  // Scripts JS para variable camas
+  // JS Variables
   script.
     window.camas = !{JSON.stringify(camas)};
+    window.pacientes_disponibles = !{JSON.stringify(pacientes_disponibles)};
 
-  // Scripts JS para botones y filtros
+  // Scripts principales
   script.
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.add-cama-btn').forEach(btn => {
@@ -95,14 +105,9 @@ block contenido
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ habitacion_id })
           });
-          if(response.ok){
-            alert("Cama agregada correctamente");
-            location.reload();
-          } else if (response.status === 409) {
-            alert("Máximo permitido de camas en esta habitación");
-          } else {
-            alert("Error al agregar cama");
-          }
+          if(response.ok){ alert("Cama agregada correctamente"); location.reload(); }
+          else if (response.status === 409){ alert("Máximo permitido de camas en esta habitación"); }
+          else { alert("Error al agregar cama"); }
         });
       });
 
@@ -116,19 +121,22 @@ block contenido
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ala_id, nombre })
           });
-          if(response.ok){
-            alert("Habitación creada correctamente");
-            location.reload();
-          } else {
-            alert("Error al crear habitación");
-          }
+          if(response.ok){ alert("Habitación creada correctamente"); location.reload(); }
+          else { alert("Error al crear habitación"); }
+        });
+      });
+
+      document.querySelectorAll('.cama-card').forEach(card => {
+        card.addEventListener('click', function () {
+          const id = this.getAttribute('data-id');
+          openModal(id);
         });
       });
 
       window.openModal = function (id) {
-        // Fuerza ambos a string para comparar correctamente
+        if (!id || isNaN(id)) return;
         const cama = window.camas.find(c => String(c.id) === String(id));
-        if (!cama) return;
+        if (!cama || !cama.estado) return;
 
         document.getElementById('modal').classList.remove('hidden');
         document.getElementById('modal-id').value = id;
@@ -156,20 +164,29 @@ block contenido
         document.getElementById('modal').classList.add('hidden');
       }
 
-      document.querySelectorAll('.cama-card').forEach(card => {
-        card.addEventListener('click', function() {
-          const id = this.getAttribute('data-id');
-          openModal(id);
-        });
+      document.getElementById('modal-paciente').addEventListener('change', function () {
+        const pacienteId = this.value;
+        const paciente = window.pacientes_disponibles.find(p => String(p.id) === pacienteId);
+        if (paciente) {
+          document.getElementById('modal-sexo').value = paciente.sexo || '';
+          document.getElementById('paciente-info').classList.remove('hidden');
+          document.getElementById('paciente-nombre').textContent = paciente.nombre || '-';
+          document.getElementById('paciente-dni').textContent = paciente.dni || '-';
+          document.getElementById('paciente-sangre').textContent = paciente.tipo_sangre || '-';
+          document.getElementById('paciente-edad').textContent = paciente.fecha_nacimiento ? calcularEdadJs(paciente.fecha_nacimiento) : '-';
+          document.getElementById('paciente-sexo').textContent = paciente.sexo || '-';
+          document.getElementById('paciente-motivo').textContent = paciente.motivo_derivacion || 'Emergencia';
+          document.getElementById('paciente-select').classList.add('hidden');
+        }
       });
 
-      document.querySelectorAll('.sidebar-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const filter = btn.getAttribute('data-filter');
-          document.querySelectorAll('.cama-card').forEach(card => {
-            const estado = card.getAttribute('data-estado');
-            card.style.display = (filter === 'all' || estado === filter) ? 'flex' : 'none';
-          });
-        });
-      });
+      function calcularEdadJs(fecha) {
+        const f = new Date(fecha);
+        const hoy = new Date();
+        let edad = hoy.getFullYear() - f.getFullYear();
+        if (hoy.getMonth() < f.getMonth() || (hoy.getMonth() === f.getMonth() && hoy.getDate() < f.getDate())) {
+          edad--;
+        }
+        return edad;
+      }
     });

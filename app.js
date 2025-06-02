@@ -165,12 +165,16 @@ app.get("/pacientes", async (req, res) => {
         m.nombre AS medico_derivante,
         d.motivo_derivacion,
         i.motivo AS motivo_internacion,
-        c.id AS cama_id
+        c.id AS cama_id,
+        h.nombre AS habitacion,
+        a.nombre AS ala
       FROM pacientes p
       LEFT JOIN derivaciones d ON d.paciente_id = p.id
       LEFT JOIN medicos m ON m.id = d.medico_id
       LEFT JOIN internaciones i ON i.paciente_id = p.id AND i.fecha_egreso IS NULL
       LEFT JOIN camas c ON c.paciente_id = p.id
+      LEFT JOIN habitaciones h ON h.id = c.habitacion_id
+      LEFT JOIN alas a ON a.id = h.ala_id
       ORDER BY p.id;
     `);
 
@@ -459,7 +463,9 @@ app.get("/habitaciones", async (req, res) => {
 
   // obtener pacientes sin cama asignada
   const pacientes_disponibles = (await pool.query(`
-    SELECT id, nombre FROM pacientes
+    SELECT id, nombre, dni, tipo_sangre, sexo, fecha_nacimiento,
+          (SELECT motivo_derivacion FROM derivaciones WHERE paciente_id = pacientes.id ORDER BY creado_en DESC LIMIT 1) as motivo_derivacion
+    FROM pacientes
     WHERE id NOT IN (SELECT paciente_id FROM camas WHERE paciente_id IS NOT NULL)
     ORDER BY nombre
   `)).rows;
@@ -570,7 +576,7 @@ app.post("/camas", async (req, res) => {
 // Editar cama
 app.post('/camas/:id/edit', async (req, res) => {
   const { id } = req.params;
-  const { estado, sexo } = req.body;
+  const { estado, sexo, paciente_id } = req.body;
   try {
     const { rows } = await pool.query(`
       SELECT h.id AS habitacion_id, a.nombre AS ala
@@ -595,8 +601,8 @@ app.post('/camas/:id/edit', async (req, res) => {
     }
 
     await pool.query(
-      `UPDATE camas SET estado = $1, sexo = $2 WHERE id = $3`,
-      [estado, sexo || null, id]
+      `UPDATE camas SET estado = $1, sexo = $2, paciente_id = $3 WHERE id = $4`,
+      [estado, sexo || null, paciente_id || null, id]
     );
     res.redirect('/habitaciones');
   } catch (err) {
