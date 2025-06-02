@@ -1,34 +1,70 @@
 extends ../layout
 
 block contenido
-    .max-w-2xl.mx-auto.bg-white.shadow-md.rounded.p-6.text-gray-900.relative.mt-20
-        a(href="/inicio" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700")
-            i.fas.fa-times.text-xl
+  .max-w-2xl.mx-auto.bg-white.shadow-md.rounded.p-6.text-gray-900.relative.mt-20
+    a(href="/inicio" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700")
+      i.fas.fa-times.text-xl
 
-        h1.text-2xl.font-bold.mb-6 Derivación Médica
+    h1.text-2xl.font-bold.mb-6 Derivación Médica
 
-        form(action="/derivacion-nuevo" method="post" class="space-y-4")
-            // Paciente registrado
-            div
-                label.block.text-sm.font-medium Paciente:
-                select(name="paciente_id" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-400")
-                    option(value="" disabled selected) Seleccionar paciente…
-                    each p in pacientes
-                        option(value=p.id)= p.nombre
+    form#form-derivacion(action="/derivacion-nuevo" method="post" class="space-y-4")
+      // Paciente registrado
+      div
+        label.block.text-sm.font-medium Paciente:
+        select(name="paciente_id" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-400")
+          option(value="" disabled selected) Seleccionar paciente…
+          each p in pacientes
+            option(value=p.id)= p.nombre
 
-            // Médico derivante
-            div
-                label.block.text-sm.font-medium Médico derivante:
-                select(name="medico_id" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-400")
-                    option(value="" disabled selected) Seleccionar médico…
-                    each m in medicos
-                        option(value=m.id)= m.nombre
+      // Médico derivante
+      div
+        label.block.text-sm.font-medium Médico derivante:
+        select(name="medico_id" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-400")
+          option(value="" disabled selected) Seleccionar médico…
+          each m in medicos
+            option(value=m.id)= m.nombre
 
-            // Motivo de derivación
-            div
-                label.block.text-sm.font-medium Motivo de derivación:
-                textarea(name="motivo_derivacion" rows="3" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-400")
+      // Especialidad derivada
+      div
+        label.block.text-sm.font-medium Especialidad derivada:
+        select(name="especialidad_derivacion" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-400")
+          option(value="" disabled selected) Seleccionar especialidad…
+          option(value="traumatología") Traumatología
+          option(value="otorrinolaringología") Otorrinolaringología
+          option(value="cardiología") Cardiología
+          option(value="gastroenterología") Gastroenterología
+          option(value="neurología") Neurología
+          option(value="neumonología") Neumonología
+          option(value="urología") Urología
 
-            div.text-right
-                button(type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold text-lg py-2 px-6 rounded")
-                    Registrar derivación
+      // Motivo de derivación
+      div
+        label.block.text-sm.font-medium Motivo de derivación:
+        textarea(name="motivo_derivacion" rows="3" required class="w-full border p-2 rounded focus:ring-2 focus:ring-green-400")
+
+      div.text-right
+        button(type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold text-lg py-2 px-6 rounded")
+            | derivación
+
+
+  script.
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('form-derivacion');
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const data = Object.fromEntries(new FormData(form));
+        const response = await fetch('/derivacion-nuevo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert('Derivación registrada correctamente');
+          form.reset();
+        } else {
+          alert('Error al registrar la derivación');
+        }
+      });
+    });

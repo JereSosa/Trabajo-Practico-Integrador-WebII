@@ -1,0 +1,68 @@
+extends ../layout
+
+block titulo
+  h1.text-3xl.font-bold.mb-6.text-white Gestión de Pacientes
+
+block contenido
+  a(href="/inicio" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded mb-6 inline-block") ← Volver al inicio
+
+  if pacientes.length
+    table.table-auto.w-full.text-sm.text-left.text-white.border
+      thead
+        tr.bg-gray-700
+          th.px-4.py-2 ID
+          th.px-4.py-2 Nombre
+          th.px-4.py-2 Teléfono
+          th.px-4.py-2 Derivado por
+          th.px-4.py-2 Motivo
+          th.px-4.py-2 Cama
+          th.px-4.py-2 Acciones
+      tbody
+        each p in pacientes
+          tr.border-t
+            td.px-4.py-2= p.id
+            td.px-4.py-2= p.nombre
+            td.px-4.py-2= p.telefono
+            td.px-4.py-2= p.medico_derivante || '–'
+            td.px-4.py-2
+              if p.motivo_internacion
+                = p.motivo_internacion
+              else if p.motivo_derivacion
+                = p.motivo_derivacion
+              else
+                | Emergencia
+            td.px-4.py-2
+              if p.cama_id
+                | Cama #{p.cama_id}
+              else
+                span.text-yellow-300 Sin cama
+            td.px-4.py-2
+              a(href=`/pacientes/${p.id}/editar` class="text-blue-400 hover:underline mr-2") Editar
+              form(method="post" action=`/pacientes/${p.id}/eliminar` style="display:inline")
+                button(type="submit" class="text-red-400 hover:underline") Eliminar
+  else
+    p.text-white No hay pacientes registrados.
+
+  if emergencias.length
+    h2.text-xl.font-bold.mt-12.mb-4.text-white Emergencias registradas
+
+    table.table-auto.w-full.text-sm.text-left.text-white.border-collapse.border.border-gray-700.rounded-md.overflow-hidden
+      thead.bg-gray-700
+        tr
+          th.px-4.py-2.border.border-gray-600.text-center Sexo
+          th.px-4.py-2.border.border-gray-600.text-center Cama ID
+          th.px-4.py-2.border.border-gray-600.text-left Motivo
+      tbody
+        each e in emergencias
+          tr.bg-gray-800(class="hover:bg-gray-700")
+            td.px-4.py-2.border.border-gray-700.text-center
+              if e.sexo === 'M'
+                span.bg-blue-500.text-white.px-2.py-1.rounded.text-xs.font-semibold Masculino
+              else if e.sexo === 'F'
+                span.bg-pink-500.text-white.px-2.py-1.rounded.text-xs.font-semibold Femenino
+              else
+                span.bg-gray-500.text-white.px-2.py-1.rounded.text-xs.font-semibold Sin definir
+            td.px-4.py-2.border.border-gray-700.text-center= e.cama_id
+            td.px-4.py-2.border.border-gray-700.text-left= e.motivo
+  else
+    p.text-gray-400.mt-4 No hay emergencias registradas.

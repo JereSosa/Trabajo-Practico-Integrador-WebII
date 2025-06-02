@@ -1,0 +1,49 @@
+extends ../layout
+
+block contenido
+  header.flex.items-center.justify-between.px-6.py-4.bg-gray-800.shadow-md.mb-8
+    button#menu-btn.text-3xl.text-white(type="button")
+      i.fas.fa-bars
+    h1.text-3xl.font-bold.text-white Gestión de Camas
+    span
+
+  main.px-6
+    a(href="/habitaciones" class="text-sm text-blue-500 hover:underline ml-1 mb-4 inline-block") ← Volver a Habitaciones
+
+    if success
+      p.bg-green-100.text-green-700.font-semibold.p-2.rounded.mb-4= success
+    if error
+      p.bg-red-100.text-red-700.font-semibold.p-2.rounded.mb-4= error
+
+    if camas.length
+      table.w-full.text-sm.text-left.text-gray-500.bg-white.shadow-md.rounded-xl.overflow-hidden
+        thead(class="bg-gray-100 text-xs uppercase text-gray-700")
+          tr
+            th.px-6.py-3 ID
+            th.px-6.py-3 Estado
+            th.px-6.py-3 Sexo
+            th.px-6.py-3 Habitación
+            th.px-6.py-3 Ala
+            th.px-6.py-3 Acciones
+        tbody
+          each cama in camas
+            tr(class="border-b hover:bg-gray-50")
+              td.px-6.py-4 #{cama.id}
+              td.px-6.py-4 #{cama.estado}
+              td.px-6.py-4 #{cama.sexo || 'Sin asignar'}
+              td.px-6.py-4 #{cama.habitacion}
+              td.px-6.py-4 #{cama.ala}
+              td.px-6.py-4(class="flex flex-col gap-2 sm:flex-row")
+                form(action=`/camas/${cama.id}/edit` method="post" class="flex flex-col gap-2 sm:flex-row")
+                  select(name="estado" class="border rounded px-2 py-1 text-black")
+                    option(value="libre_higienizada" selected=cama.estado === 'libre_higienizada') Libre Higienizada
+                    option(value="ocupada" selected=cama.estado === 'ocupada') Ocupada
+                  select(name="sexo" class="border rounded px-2 py-1 text-black")
+                    option(value="") --
+                    option(value="M" selected=cama.sexo === 'M') M
+                    option(value="F" selected=cama.sexo === 'F') F
+                  button(type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold px-3 py-1 rounded") Guardar
+                form(action=`/camas/${cama.id}/delete` method="post" onsubmit="return confirm('¿Eliminar cama?');")
+                  button(type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold px-3 py-1 rounded") Eliminar
+    else
+      p.text-center.text-gray-600.mt-8 No hay camas registradas aún.

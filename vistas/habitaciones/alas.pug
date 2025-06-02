@@ -1,29 +1,30 @@
 extends ../layout
 
 block titulo
-  h1.text-3xl.font-bold.text-white Gestión de Alas
+  h1.text-3xl.font-bold.text-white.mb-2 Gestión de Alas
+  a(href="/habitaciones" class="text-white hover:underline text-sm ml-1 inline-block") ← Volver a Habitaciones
 
 block contenido
-  div(class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6")
+  div(class="max-w-2xl mx-auto rounded-xl shadow-lg p-6")
     //– Mensajes de éxito/error si vienen por querystring
     if success || error
-    div(
-      id="aviso-mensaje"
-      class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50"
-      style="min-width:400px;"
-    )
-      if success == 'ala_creada'
-        div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
-          | Ala creada exitosamente.
-      else if success == 'ala_modificada'
-        div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
-          | Ala modificada exitosamente.
-      else if success == 'ala_eliminada'
-        div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
-          | Ala eliminada exitosamente.
-      if error
-        div(class="bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg")
-          | #{error}
+      div(
+        id="aviso-mensaje"
+        class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50"
+        style="min-width:400px;"
+      )
+        if success == 'ala_creada'
+          div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
+            | Ala creada exitosamente.
+        else if success == 'ala_modificada'
+          div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
+            | Ala modificada exitosamente.
+        else if success == 'ala_eliminada'
+          div(class="bg-green-600 text-white font-bold py-2 px-6 rounded shadow-lg animate-bounce")
+            | Ala eliminada exitosamente.
+        if error
+          div(class="bg-red-600 text-white font-bold py-2 px-6 rounded shadow-lg")
+            | #{error}
 
   //––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
   //– Formulario para CREAR NUEVA “Ala”
@@ -64,4 +65,4 @@ block contenido
                 button(type="submit" class="bg-red-500 hover:bg-red-600 text-white text-sm px-2 py-1 rounded" onclick="return confirm('¿Seguro que deseas eliminar esta ala?');")
                   | Eliminar
   else
-    p.text-center.text-gray-300 No hay alas registradas. ¡Crea la primera!  
+    p.text-center.text-gray-300 No hay alas registradas. ¡Crea la primera!

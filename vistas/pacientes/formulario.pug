@@ -1,0 +1,56 @@
+extends ../layout
+
+block titulo
+  h1.text-3xl.font-bold.mb-6.text-white Editar Paciente
+
+block contenido
+  form(method="post" action=`/pacientes/${paciente.id}` class="max-w-md mx-auto space-y-4")
+    label.block.text-white Nombre:
+    input(
+      type="text"
+      name="nombre"
+      required
+      value=paciente.nombre
+      class="w-full p-2 rounded text-gray-900"
+    )
+
+    label.block.text-white Teléfono:
+    input(
+      type="text"
+      name="telefono"
+      required
+      value=paciente.telefono
+      class="w-full p-2 rounded text-gray-900"
+    )
+
+    label.block.text-white Motivo de derivación o consulta:
+    input(
+      type="text"
+      name="motivo"
+      readonly
+      value=paciente.motivo_derivacion || 'Emergencia'
+      class="w-full p-2 rounded bg-gray-100 text-gray-800"
+    )
+
+    label.block.text-white Médico que lo derivó:
+    select(
+      name="medico_id"
+      class="w-full border border-gray-300 p-2 rounded text-gray-900"
+    )
+      option(value="" selected=(!paciente.medico_id)) Seleccionar médico…
+      each m in medicos
+        option(
+          value=m.id
+          selected=(m.id == paciente.medico_id)
+        )= m.nombre
+
+    label.block.text-white Ubicación actual:
+    input(
+      type="text"
+      readonly
+      value=paciente.cama_id ? `Cama ${paciente.cama_id} – Habitación ${paciente.habitacion} – Ala ${paciente.ala}` : 'Sin cama asignada'
+      class="w-full p-2 rounded bg-gray-100 text-gray-800"
+    )
+
+    button(type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded")
+      | Guardar cambios

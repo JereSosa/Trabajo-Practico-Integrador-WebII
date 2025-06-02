@@ -15,77 +15,161 @@ block contenido
 
           if ala.habitaciones.length > 0
             each habitacion in ala.habitaciones
+              - const cantCamas = habitacion.camas.length;
               .habitacion.flex.flex-col.gap-2.bg-gradient-to-r.from-gray-100.to-gray-300.rounded-xl.p-4.shadow
                 .flex.items-center.mb-1
                   h3.text-lg.font-bold.text-gray-800.flex-1 #{habitacion.nombre}
-                  button.add-cama-btn(
-                    type="button",
-                    data-hab=habitacion.id,
-                    class="bg-blue-300 text-blue-900 text-sm font-bold px-2 py-1 rounded shadow hover:bg-blue-400"
-                    ) + Agregar Cama
-                
-                each cama in habitacion.camas
-                    .cama-card.flex.flex-col.items-center.justify-center.w-24.h-24.rounded-xl.shadow-xl.cursor-pointer.relative.transition(
-                        class=(cama.estado === 'ocupada' ? 'bg-red-400 hover:scale-105' : 'bg-green-400 hover:scale-105')
-                        data-id=cama.id
-                        data-estado=cama.estado
-                        data-hab=habitacion.id
+                  if cantCamas < 2 || ala.nombre.toLowerCase().includes('emergencia')
+                    button.add-cama-btn(type="button" data-hab=habitacion.id class="bg-blue-300 text-blue-900 text-sm font-bold px-2 py-1 rounded shadow hover:bg-blue-400") + Agregar Cama
+
+                .flex.flex-wrap.gap-2
+                  each cama in habitacion.camas
+                    - const color = cama.estado === 'ocupada' ? 'bg-red-400' : cama.estado === 'higienizando' ? 'bg-yellow-300' : 'bg-green-400';
+                    .cama-card.flex.flex-col.items-center.justify-center.w-24.h-24.rounded-xl.shadow-xl.cursor-pointer.relative.transition.text-white.text-center.text-xs.font-semibold.p-1(
+                      class=`${color} hover:scale-105`
+                      data-id=cama.id
+                      data-estado=cama.estado
                     )
-                        span.font-bold.text-lg #{cama.id}
-                        if cama.estado === 'ocupada'
-                            i.fas.fa-bed.text-2xl.my-1
-                            span.text-xs.font-semibold Ocupada
-                        else
-                            i.fas.fa-plus.text-2xl.my-1
-                            span.text-xs.font-semibold Libre
+                      span.font-bold.text-lg #{cama.id}
+                      i.fas.fa-bed.text-2xl.my-1
+                      span.text-xs.break-words.max-w-full.text-center #{cama.estado}
+
           else
             .text-center.text-gray-600 No hay habitaciones creadas todavía.
-            button.add-habitacion-btn.bg-indigo-400.text-white.rounded.px-2.py-1.shadow.mt-2(
-              type="button",
-              data-ala=ala.id
-            ) + Crear Habitación
+            button.add-habitacion-btn.bg-indigo-400.text-white.rounded.px-2.py-1.shadow.mt-2(type="button" data-ala=ala.id) + Crear Habitación
 
-  // Scripts JS para botones
+  // Modal para editar cama
+  div#modal.hidden.fixed.inset-0.bg-black.bg-opacity-50.flex.items-center.justify-center.z-50
+    div(style="width: 90%;" class="bg-white text-gray-900 rounded-xl shadow-xl max-w-md p-6 relative")
+      h2.text-xl.font-bold.mb-4 Detalle de Cama
+      form(method="POST" id="modal-form")
+        input(type="hidden" name="id" id="modal-id")
+
+        label.text-sm.font-semibold Estado
+        select#modal-estado(name="estado" class="w-full border rounded px-2 py-1 mb-4 text-black")
+          option(value="libre_higienizada") Libre Higienizada
+          option(value="ocupada") Ocupada
+          option(value="higienizando") Higienizando
+
+        label.text-sm.font-semibold Sexo
+        select#modal-sexo(name="sexo" class="w-full border rounded px-2 py-1 mb-4 text-black")
+          option(value="") --
+          option(value="M") M
+          option(value="F") F
+
+        div#paciente-info.hidden.mb-4
+          h3.font-semibold.mb-1 Información del Paciente
+          ul.text-sm.text-gray-700
+            li strong Nombre:  span#paciente-nombre
+            li strong DNI:  span#paciente-dni
+            li strong Tipo de Sangre:  span#paciente-sangre
+            li strong Edad:  span#paciente-edad
+            li strong Sexo:  span#paciente-sexo
+            li strong Motivo:  span#paciente-motivo
+
+        div#paciente-select.mb-4
+          label.text-sm.font-semibold Seleccionar Paciente
+          select#modal-paciente(name="paciente_id" class="w-full border rounded px-2 py-1 text-black")
+            option(value="") -- Seleccionar paciente --
+            each p in pacientes_disponibles
+              option(value=p.id)= p.nombre
+
+        div.flex.justify-between.mt-4
+          button(type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded") Guardar
+          button(type="button" onclick="closeModal()" class="text-gray-600 hover:underline") Cancelar
+      form(method="POST" id="delete-form" class="mt-2")
+        button(type="submit" class="bg-red-500 hover:bg-red-600 text-white w-full px-4 py-2 rounded mt-2") 🗑️ Eliminar
+
+  // Scripts JS para variable camas
   script.
-    document.querySelectorAll('.add-cama-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const habitacion_id = e.target.getAttribute('data-hab');
-        
-        const response = await fetch('/camas', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ habitacion_id })
-        });
+    window.camas = !{JSON.stringify(camas)};
 
-        if(response.ok){
-          alert("Cama agregada correctamente");
-          location.reload();
+  // Scripts JS para botones y filtros
+  script.
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.add-cama-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const habitacion_id = e.target.getAttribute('data-hab');
+          const response = await fetch('/camas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ habitacion_id })
+          });
+          if(response.ok){
+            alert("Cama agregada correctamente");
+            location.reload();
+          } else if (response.status === 409) {
+            alert("Máximo permitido de camas en esta habitación");
+          } else {
+            alert("Error al agregar cama");
+          }
+        });
+      });
+
+      document.querySelectorAll('.add-habitacion-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const ala_id = e.target.getAttribute('data-ala');
+          const nombre = prompt("Ingresa el nombre de la habitación:");
+          if (!nombre) return;
+          const response = await fetch('/habitaciones', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ala_id, nombre })
+          });
+          if(response.ok){
+            alert("Habitación creada correctamente");
+            location.reload();
+          } else {
+            alert("Error al crear habitación");
+          }
+        });
+      });
+
+      window.openModal = function (id) {
+        // Fuerza ambos a string para comparar correctamente
+        const cama = window.camas.find(c => String(c.id) === String(id));
+        if (!cama) return;
+
+        document.getElementById('modal').classList.remove('hidden');
+        document.getElementById('modal-id').value = id;
+        document.getElementById('modal-estado').value = cama.estado;
+        document.getElementById('modal-sexo').value = cama.sexo || '';
+        document.getElementById('modal-form').action = `/camas/${id}/edit`;
+        document.getElementById('delete-form').action = `/camas/${id}/delete`;
+
+        if (cama.paciente) {
+          document.getElementById('paciente-info').classList.remove('hidden');
+          document.getElementById('paciente-nombre').textContent = cama.paciente.nombre || '-';
+          document.getElementById('paciente-dni').textContent = cama.paciente.dni || '-';
+          document.getElementById('paciente-sangre').textContent = cama.paciente.tipo_sangre || '-';
+          document.getElementById('paciente-edad').textContent = cama.paciente.edad || '-';
+          document.getElementById('paciente-sexo').textContent = cama.paciente.sexo || '-';
+          document.getElementById('paciente-motivo').textContent = cama.paciente.motivo || '-';
+          document.getElementById('paciente-select').classList.add('hidden');
         } else {
-          alert("Error al agregar cama");
+          document.getElementById('paciente-info').classList.add('hidden');
+          document.getElementById('paciente-select').classList.remove('hidden');
         }
+      }
+
+      window.closeModal = function () {
+        document.getElementById('modal').classList.add('hidden');
+      }
+
+      document.querySelectorAll('.cama-card').forEach(card => {
+        card.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          openModal(id);
+        });
+      });
+
+      document.querySelectorAll('.sidebar-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.getAttribute('data-filter');
+          document.querySelectorAll('.cama-card').forEach(card => {
+            const estado = card.getAttribute('data-estado');
+            card.style.display = (filter === 'all' || estado === filter) ? 'flex' : 'none';
+          });
+        });
       });
     });
-
-    document.querySelectorAll('.add-habitacion-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const ala_id = e.target.getAttribute('data-ala');
-        const nombre = prompt("Ingresa el nombre de la habitación:");
-        
-        if (!nombre) return;
-
-        const response = await fetch('/habitaciones', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ala_id, nombre })
-        });
-
-        if(response.ok){
-          alert("Habitación creada correctamente");
-          location.reload();
-        } else {
-          alert("Error al crear habitación");
-        }
-      });
-    });
-
-

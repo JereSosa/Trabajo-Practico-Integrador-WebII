@@ -3,13 +3,15 @@ extends ../layout
 block contenido
   .text-center.mt-24
     h1.text-5xl.font-bold.mb-12 Sistema HIS - Hospital Central
-
-    //– Aquí cambiamos .flex.flex-col.md:flex-row por un div con class= … ––
+    if success == 'turno'
+      div(class="bg-green-600 text-white text-center py-2 px-4 rounded mb-6 font-semibold shadow")
+        | ✅ Turno registrado con éxito
     div(class="flex flex-col md:flex-row items-center justify-center gap-6")
       form(action="/proceso-ingreso" method="post")
         input(type="hidden" name="motivo" value="cita")
         button(
-          type="submit"
+          type="button"
+          onclick=usuario && usuario.rol === 'paciente' ? "window.location.href='/turno'" : "document.getElementById('login-modal').classList.remove('hidden'); document.getElementById('tab-paciente').click();"
           class="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
         )
           i.fas.fa-calendar-check.mr-2
@@ -32,5 +34,22 @@ block contenido
         )
           i.fas.fa-ambulance
           | EMERGENCIA
+
+    // Solo si es doctor, mostramos estos accesos
+    if usuario && usuario.rol == 'doctor'
+      div(class="mt-12 flex flex-col md:flex-row items-center justify-center gap-6")
+        a(
+          href="/habitaciones"
+          class="bg-blue-700 hover:bg-blue-800 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
+        )
+          i.fas.fa-bed.mr-2
+          | Ir a Habitaciones
+
+        a(
+          href="/pacientes"
+          class="bg-green-700 hover:bg-green-800 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
+        )
+          i.fas.fa-user-injured.mr-2
+          | Ver Pacientes
 
 
