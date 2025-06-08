@@ -1,39 +1,55 @@
 extends ../layout
 
 block contenido
-  //– Agregamos mt-20 para separar del tope y posición relative para la “X” –//
-  .max-w-xl.mx-auto.bg-white.shadow-md.rounded.p-6.text-gray-900.relative.mt-20
-    //– Botón cerrar vuelve a /inicio –//
-    a(href="/inicio" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700")
-      i(class="fas fa-times text-xl")
-
-    h1.text-2xl.font-bold.mb-4 Admisión de Paciente
+  .max-w-xl.mx-auto.mt-20.bg-white.p-8.rounded-xl.shadow-xl.text-gray-900
+    h2.text-3xl.font-bold.mb-6.text-blue-800 Admisión de Paciente
 
     form(action="/admisiones" method="post" class="space-y-4")
-      // Nombre
-      div
-        label.block.text-sm.font-medium Nombre:
-        input(type="text" name="nombre" required class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400")
+      label.block.mb-1 Nombre:
+      input(type="text" name="nombre" required class="w-full border p-2 rounded")
 
-      // DNI
-      div
-        label.block.text-sm.font-medium DNI:
-        input(type="text" name="dni" required class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400")
+      label.block.mb-1 Dirección:
+      input(type="text" name="direccion" required class="w-full border p-2 rounded")
 
-      // Sexo
-      div
-        label.block.text-sm.font-medium Sexo:
-        select(name="sexo" required class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400")
-          option(value="" disabled selected) Seleccioná…
-          option(value="M") Masculino
-          option(value="F") Femenino
+      label.block.mb-1 Teléfono:
+      input(type="text" name="telefono" required class="w-full border p-2 rounded")
 
-      // Motivo de internación
-      div
-        label.block.text-sm.font-medium Motivo de Internación:
-        textarea(name="motivo" rows="3" required class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400")
+      label.block.mb-1 Contacto de Emergencia:
+      input(type="text" name="contacto_emergencia" required class="w-full border p-2 rounded")
 
-      // Botón de envío
-      div
-        button(type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-lg py-2 px-6 rounded shadow transition-all") Registrar
+      label.block.mb-1 Fecha de Nacimiento:
+      input(type="date" name="fecha_nacimiento" required class="w-full border p-2 rounded")
 
+      label.block.mb-1 Obra Social:
+      input(type="text" name="obra_social" class="w-full border p-2 rounded")
+
+      label.block.mb-1 Sexo:
+      select(name="sexo" required class="w-full border p-2 rounded")
+        option(value="" disabled selected) Selecciona…
+        option(value="M") Masculino
+        option(value="F") Femenino
+
+      label.block.mb-1 DNI:
+      input(type="text" name="dni" class="w-full border p-2 rounded")
+
+      label.block.mb-1 Tipo de Sangre:
+      select(name="tipo_sangre" required class="w-full border p-2 rounded")
+        option(value="" disabled selected) Selecciona…
+        option(value="O+") O+
+        option(value="O-") O-
+        option(value="A+") A+
+        option(value="A-") A-
+        option(value="B+") B+
+        option(value="B-") B-
+        option(value="AB+") AB+
+        option(value="AB-") AB-
+
+      label.block.mb-1 Motivo de Internación:
+        textarea(name="motivo" rows="3" required class="w-full border p-2 rounded")
+
+      button(type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded")
+        | Registrar Admisión
+
+      a(href="/inicio" class="block text-center mt-4 bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 rounded shadow transition")
+        i.fas.fa-arrow-left.mr-2
+        | Volver al inicio  

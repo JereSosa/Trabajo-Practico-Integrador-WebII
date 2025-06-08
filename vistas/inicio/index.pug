@@ -6,6 +6,9 @@ block contenido
     if success == 'turno'
       div(class="bg-green-600 text-white text-center py-2 px-4 rounded mb-6 font-semibold shadow")
         | ✅ Turno registrado con éxito
+    else if success == 'admitido'
+      div(class="bg-green-600 text-white text-center py-2 px-4 rounded mb-6 font-semibold shadow")
+        | ✅ Paciente admitido con éxito    
     div(class="flex flex-col md:flex-row items-center justify-center gap-6")
       form(action="/proceso-ingreso" method="post")
         input(type="hidden" name="motivo" value="cita")
@@ -17,14 +20,15 @@ block contenido
           i.fas.fa-calendar-check.mr-2
           | Sacar turno
 
-      form(action="/proceso-ingreso" method="post")
-        input(type="hidden" name="motivo" value="derivacion")
-        button(
-          type="submit"
-          class="bg-green-500 hover:bg-green-600 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
-        )
-          i.fas.fa-user-md.mr-2
-          | Derivación Médica
+      if usuario && usuario.rol == 'doctor'
+        form(action="/proceso-ingreso" method="post")
+          input(type="hidden" name="motivo" value="derivacion")
+          button(
+            type="submit"
+            class="bg-green-500 hover:bg-green-600 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
+          )
+            i.fas.fa-user-md.mr-2
+            | Derivación Médica
 
     div(class="mt-8 flex justify-center")
       form(action="/emergencia" method="get" class="w-full")
@@ -35,21 +39,28 @@ block contenido
           i.fas.fa-ambulance
           | EMERGENCIA
 
-    // Solo si es doctor, mostramos estos accesos
     if usuario && usuario.rol == 'doctor'
-      div(class="mt-12 flex flex-col md:flex-row items-center justify-center gap-6")
-        a(
-          href="/habitaciones"
-          class="bg-blue-700 hover:bg-blue-800 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
-        )
-          i.fas.fa-bed.mr-2
-          | Ir a Habitaciones
+        div(class="mt-12 flex flex-col md:flex-row items-center justify-center gap-6")
+          a(
+            href="/habitaciones"
+            class="bg-blue-700 hover:bg-blue-800 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
+          )
+            i.fas.fa-bed.mr-2
+            | Ir a Habitaciones
 
-        a(
-          href="/pacientes"
-          class="bg-green-700 hover:bg-green-800 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
-        )
-          i.fas.fa-user-injured.mr-2
-          | Ver Pacientes
+          a(
+            href="/pacientes"
+            class="bg-green-700 hover:bg-green-800 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
+          )
+            i.fas.fa-user-injured.mr-2
+            | Ver Pacientes
 
+          a(
+            href="/admisiones"
+            class="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold text-lg py-4 px-8 rounded-lg shadow transition-all"
+          )
+            i.fas.fa-user-plus.mr-2
+            | Admisión de Pacientes
+    else
+        // no muestra nada
 

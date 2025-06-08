@@ -24,16 +24,10 @@ block contenido
             td.px-4.py-2= p.nombre
             td.px-4.py-2= p.telefono
             td.px-4.py-2= p.medico_derivante || '–'
-            td.px-4.py-2
-              if p.motivo_internacion
-                = p.motivo_internacion
-              else if p.motivo_derivacion
-                = p.motivo_derivacion
-              else
-                | Emergencia
+            td.px-4.py-2= p.motivo || 'Sin motivo'
             td.px-4.py-2
               if p.cama_id
-                | Cama #{p.cama_id} – Habitación #{p.habitacion} – Ala #{p.ala}
+                | Cama #{p.cama_id} – #{p.habitacion} – #{p.ala}
               else
                 span.text-yellow-300 Sin cama asignada
             td.px-4.py-2

@@ -1,0 +1,25 @@
+extends ../layout
+
+block contenido
+  .max-w-lg.mx-auto.bg-white.shadow-md.rounded.p-6.mt-20.text-gray-900
+    h1.text-xl.font-bold.mb-4 Confirmar nuevo turno
+
+    p.mb-4 Ya tenés un turno registrado con el motivo:
+    p.font-semibold.mb-6.bg-gray-100.p-2.rounded= turnoAnterior.motivo_turno
+
+    p.text-sm.mb-4 ¿Querés reemplazarlo por este nuevo motivo?
+    p.font-semibold.mb-6.bg-yellow-100.p-2.rounded= nuevoMotivo
+
+    form(method="post" action="/turno-confirmado")
+      // Asegurar que paciente_id y motivo_turno se envían
+      input(type="hidden" name="paciente_id" value=pacienteSeleccionado.id)
+      input(type="hidden" name="motivo_turno" value=nuevoMotivo)
+
+      // Enviar también los demás datos si son necesarios para completar el turno
+      each val, key in formData
+        if key !== 'motivo_turno' && key !== 'paciente_id'
+          input(type="hidden" name=key value=val)
+
+      button(type="submit" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded mr-2")
+        | Confirmar y reemplazar
+      a(href="/inicio" class="text-gray-600 hover:underline") Cancelar
