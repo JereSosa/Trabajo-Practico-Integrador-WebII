@@ -5,7 +5,7 @@
 -- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.5
 
--- Started on 2025-06-02 19:49:34
+-- Started on 2025-06-08 19:37:00
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -53,7 +53,7 @@ CREATE SEQUENCE public.alas_id_seq
 ALTER SEQUENCE public.alas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5004 (class 0 OID 0)
+-- TOC entry 5006 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: alas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -95,7 +95,7 @@ CREATE SEQUENCE public.camas_id_seq
 ALTER SEQUENCE public.camas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5005 (class 0 OID 0)
+-- TOC entry 5007 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: camas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -111,7 +111,7 @@ ALTER SEQUENCE public.camas_id_seq OWNED BY public.camas.id;
 CREATE TABLE public.derivaciones (
     id integer NOT NULL,
     paciente_id integer NOT NULL,
-    medico_id integer NOT NULL,
+    medico_id integer,
     motivo_derivacion text NOT NULL,
     creado_en timestamp without time zone DEFAULT now(),
     especialidad_derivacion character varying(100)
@@ -137,7 +137,7 @@ CREATE SEQUENCE public.derivaciones_id_seq
 ALTER SEQUENCE public.derivaciones_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5006 (class 0 OID 0)
+-- TOC entry 5008 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: derivaciones_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -178,7 +178,7 @@ CREATE SEQUENCE public.emergencias_id_seq
 ALTER SEQUENCE public.emergencias_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5007 (class 0 OID 0)
+-- TOC entry 5009 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: emergencias_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -217,7 +217,7 @@ CREATE SEQUENCE public.habitaciones_id_seq
 ALTER SEQUENCE public.habitaciones_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5008 (class 0 OID 0)
+-- TOC entry 5010 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: habitaciones_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -259,7 +259,7 @@ CREATE SEQUENCE public.internaciones_id_seq
 ALTER SEQUENCE public.internaciones_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5009 (class 0 OID 0)
+-- TOC entry 5011 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: internaciones_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -301,7 +301,7 @@ CREATE SEQUENCE public.medicos_id_seq
 ALTER SEQUENCE public.medicos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5010 (class 0 OID 0)
+-- TOC entry 5012 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: medicos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -352,7 +352,7 @@ CREATE SEQUENCE public.pacientes_id_seq
 ALTER SEQUENCE public.pacientes_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5011 (class 0 OID 0)
+-- TOC entry 5013 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: pacientes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -393,7 +393,7 @@ CREATE SEQUENCE public.turnos_id_seq
 ALTER SEQUENCE public.turnos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 5012 (class 0 OID 0)
+-- TOC entry 5014 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: turnos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -474,7 +474,7 @@ ALTER TABLE ONLY public.turnos ALTER COLUMN id SET DEFAULT nextval('public.turno
 
 
 --
--- TOC entry 4990 (class 0 OID 16969)
+-- TOC entry 4992 (class 0 OID 16969)
 -- Dependencies: 226
 -- Data for Name: alas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -487,33 +487,42 @@ COPY public.alas (id, nombre) FROM stdin;
 
 
 --
--- TOC entry 4994 (class 0 OID 16988)
+-- TOC entry 4996 (class 0 OID 16988)
 -- Dependencies: 230
 -- Data for Name: camas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.camas (id, habitacion_id, paciente_id, estado, sexo) FROM stdin;
-67	8	20	ocupada	M
 63	8	\N	higienizando	M
+74	8	29	ocupada	M
+70	9	\N	ocupada	M
 68	10	15	ocupada	F
 62	9	\N	libre_higienizada	F
-61	9	\N	libre_higienizada	M
+69	10	\N	libre_higienizada	\N
+61	9	\N	ocupada	M
+71	9	\N	libre_higienizada	\N
+72	9	\N	libre_higienizada	\N
+73	9	\N	libre_higienizada	\N
 \.
 
 
 --
--- TOC entry 4988 (class 0 OID 16949)
+-- TOC entry 4990 (class 0 OID 16949)
 -- Dependencies: 224
 -- Data for Name: derivaciones; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.derivaciones (id, paciente_id, medico_id, motivo_derivacion, creado_en, especialidad_derivacion) FROM stdin;
 4	20	4	Al final tiene pulmonia	2025-06-02 18:56:37.117807	neumonología
+5	21	4	al final era por el corazon	2025-06-02 20:06:17.244151	cardiología
+6	15	1	asdas	2025-06-08 16:31:32.74032	cardiología
+7	15	4	ASDSA	2025-06-08 16:47:07.525569	cardiología
+14	29	3	Picante era la quebradura que tenia	2025-06-08 18:51:05.579155	traumatología
 \.
 
 
 --
--- TOC entry 4998 (class 0 OID 17041)
+-- TOC entry 5000 (class 0 OID 17041)
 -- Dependencies: 234
 -- Data for Name: emergencias; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -521,11 +530,13 @@ COPY public.derivaciones (id, paciente_id, medico_id, motivo_derivacion, creado_
 COPY public.emergencias (id, motivo, sexo, cama_id, creado_en) FROM stdin;
 1	Le duele el pechamen de la herida de bala	M	61	2025-06-01 22:22:20.769669
 2	Herida de bala	F	62	2025-06-01 22:37:48.23015
+3	Herida de bala 	M	61	2025-06-02 20:09:52.257929
+4	Flecha en la cabeza	M	70	2025-06-08 18:52:37.079446
 \.
 
 
 --
--- TOC entry 4992 (class 0 OID 16976)
+-- TOC entry 4994 (class 0 OID 16976)
 -- Dependencies: 228
 -- Data for Name: habitaciones; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -538,7 +549,7 @@ COPY public.habitaciones (id, ala_id, nombre) FROM stdin;
 
 
 --
--- TOC entry 4996 (class 0 OID 17017)
+-- TOC entry 4998 (class 0 OID 17017)
 -- Dependencies: 232
 -- Data for Name: internaciones; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -548,7 +559,7 @@ COPY public.internaciones (id, paciente_id, habitacion_id, fecha_ingreso, fecha_
 
 
 --
--- TOC entry 4986 (class 0 OID 16942)
+-- TOC entry 4988 (class 0 OID 16942)
 -- Dependencies: 222
 -- Data for Name: medicos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -562,7 +573,7 @@ COPY public.medicos (id, nombre, especialidad, email, usuario, password) FROM st
 
 
 --
--- TOC entry 4982 (class 0 OID 16918)
+-- TOC entry 4984 (class 0 OID 16918)
 -- Dependencies: 218
 -- Data for Name: pacientes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -570,11 +581,13 @@ COPY public.medicos (id, nombre, especialidad, email, usuario, password) FROM st
 COPY public.pacientes (id, nombre, direccion, telefono, contacto_emergencia, fecha_nacimiento, obra_social, sexo, created_at, email, password, dni, tipo_sangre) FROM stdin;
 15	Becky g	Un lugar de millonario	112233445566	7788994455	2010-06-17	Pami	F	2025-06-01 20:40:06.218821	\N	\N	10963621	AB+
 20	Jeremias	\N	2657244771	\N	\N	\N	M	2025-06-02 18:51:29.784133	jere.sosa.322@gmail.com	$2b$10$vkEsNZrso7S6FxIgunW.ReKE9b2Vjfhq6XpvI2gOx5vgljT6aXE.a	10584774	A+
+21	ignacio	\N	11122233344	\N	\N	\N	M	2025-06-02 20:01:45.578181	igna@gmail.com	$2b$10$bs7njOI4rPnZXBUb2ZwAXesYIxRuypk.GYyA.qndiV64BRddqRyGu	123456789	AB+
+29	prueba	\N	16516516516	\N	\N	\N	M	2025-06-08 18:50:00.525993	prueba@gmail.com	$2b$10$dCoRZW9j2LP4sBdiu8PdB.vBMGMKUHnn09wvVl3JjcKTv6rdjiv.K	22445577	B-
 \.
 
 
 --
--- TOC entry 4984 (class 0 OID 16927)
+-- TOC entry 4986 (class 0 OID 16927)
 -- Dependencies: 220
 -- Data for Name: turnos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -582,11 +595,14 @@ COPY public.pacientes (id, nombre, direccion, telefono, contacto_emergencia, fec
 COPY public.turnos (id, paciente_id, motivo_turno, creado_en, fecha) FROM stdin;
 5	15	Me lele la cabecha	2025-06-01 20:40:06.219869	2025-06-02 18:55:16.53542
 9	20	Lele pancha	2025-06-02 18:56:16.629982	2025-06-02 18:56:16.629982
+10	21	me duele la cabeza	2025-06-02 20:05:11.165434	2025-06-02 20:05:11.165434
+17	29	algo picante comi	2025-06-08 18:50:33.067254	2025-06-08 18:50:33.067254
+18	29	kekekeke	2025-06-08 18:51:39.065333	2025-06-08 18:51:39.065333
 \.
 
 
 --
--- TOC entry 5013 (class 0 OID 0)
+-- TOC entry 5015 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: alas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -595,34 +611,34 @@ SELECT pg_catalog.setval('public.alas_id_seq', 7, true);
 
 
 --
--- TOC entry 5014 (class 0 OID 0)
+-- TOC entry 5016 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: camas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.camas_id_seq', 68, true);
-
-
---
--- TOC entry 5015 (class 0 OID 0)
--- Dependencies: 223
--- Name: derivaciones_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.derivaciones_id_seq', 4, true);
-
-
---
--- TOC entry 5016 (class 0 OID 0)
--- Dependencies: 233
--- Name: emergencias_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.emergencias_id_seq', 2, true);
+SELECT pg_catalog.setval('public.camas_id_seq', 74, true);
 
 
 --
 -- TOC entry 5017 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: derivaciones_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.derivaciones_id_seq', 14, true);
+
+
+--
+-- TOC entry 5018 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: emergencias_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.emergencias_id_seq', 4, true);
+
+
+--
+-- TOC entry 5019 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: habitaciones_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -631,16 +647,16 @@ SELECT pg_catalog.setval('public.habitaciones_id_seq', 10, true);
 
 
 --
--- TOC entry 5018 (class 0 OID 0)
+-- TOC entry 5020 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: internaciones_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.internaciones_id_seq', 1, false);
+SELECT pg_catalog.setval('public.internaciones_id_seq', 1, true);
 
 
 --
--- TOC entry 5019 (class 0 OID 0)
+-- TOC entry 5021 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: medicos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -649,25 +665,25 @@ SELECT pg_catalog.setval('public.medicos_id_seq', 4, true);
 
 
 --
--- TOC entry 5020 (class 0 OID 0)
+-- TOC entry 5022 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: pacientes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.pacientes_id_seq', 20, true);
+SELECT pg_catalog.setval('public.pacientes_id_seq', 29, true);
 
 
 --
--- TOC entry 5021 (class 0 OID 0)
+-- TOC entry 5023 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: turnos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.turnos_id_seq', 9, true);
+SELECT pg_catalog.setval('public.turnos_id_seq', 18, true);
 
 
 --
--- TOC entry 4818 (class 2606 OID 16974)
+-- TOC entry 4820 (class 2606 OID 16974)
 -- Name: alas alas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -676,7 +692,7 @@ ALTER TABLE ONLY public.alas
 
 
 --
--- TOC entry 4822 (class 2606 OID 16995)
+-- TOC entry 4824 (class 2606 OID 16995)
 -- Name: camas camas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -685,7 +701,7 @@ ALTER TABLE ONLY public.camas
 
 
 --
--- TOC entry 4816 (class 2606 OID 16957)
+-- TOC entry 4818 (class 2606 OID 16957)
 -- Name: derivaciones derivaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -703,7 +719,16 @@ ALTER TABLE ONLY public.pacientes
 
 
 --
--- TOC entry 4826 (class 2606 OID 17049)
+-- TOC entry 4804 (class 2606 OID 17057)
+-- Name: pacientes email_unico; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pacientes
+    ADD CONSTRAINT email_unico UNIQUE (email);
+
+
+--
+-- TOC entry 4828 (class 2606 OID 17049)
 -- Name: emergencias emergencias_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -712,7 +737,7 @@ ALTER TABLE ONLY public.emergencias
 
 
 --
--- TOC entry 4820 (class 2606 OID 16981)
+-- TOC entry 4822 (class 2606 OID 16981)
 -- Name: habitaciones habitaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -721,7 +746,7 @@ ALTER TABLE ONLY public.habitaciones
 
 
 --
--- TOC entry 4824 (class 2606 OID 17023)
+-- TOC entry 4826 (class 2606 OID 17023)
 -- Name: internaciones internaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -730,7 +755,7 @@ ALTER TABLE ONLY public.internaciones
 
 
 --
--- TOC entry 4810 (class 2606 OID 17007)
+-- TOC entry 4812 (class 2606 OID 17007)
 -- Name: medicos medicos_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -739,7 +764,7 @@ ALTER TABLE ONLY public.medicos
 
 
 --
--- TOC entry 4812 (class 2606 OID 16947)
+-- TOC entry 4814 (class 2606 OID 16947)
 -- Name: medicos medicos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -748,7 +773,7 @@ ALTER TABLE ONLY public.medicos
 
 
 --
--- TOC entry 4814 (class 2606 OID 17009)
+-- TOC entry 4816 (class 2606 OID 17009)
 -- Name: medicos medicos_usuario_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -757,7 +782,7 @@ ALTER TABLE ONLY public.medicos
 
 
 --
--- TOC entry 4804 (class 2606 OID 17013)
+-- TOC entry 4806 (class 2606 OID 17013)
 -- Name: pacientes pacientes_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -766,7 +791,7 @@ ALTER TABLE ONLY public.pacientes
 
 
 --
--- TOC entry 4806 (class 2606 OID 16925)
+-- TOC entry 4808 (class 2606 OID 16925)
 -- Name: pacientes pacientes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -775,7 +800,7 @@ ALTER TABLE ONLY public.pacientes
 
 
 --
--- TOC entry 4808 (class 2606 OID 16935)
+-- TOC entry 4810 (class 2606 OID 16935)
 -- Name: turnos turnos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -784,7 +809,7 @@ ALTER TABLE ONLY public.turnos
 
 
 --
--- TOC entry 4831 (class 2606 OID 16996)
+-- TOC entry 4833 (class 2606 OID 16996)
 -- Name: camas camas_habitacion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -793,7 +818,7 @@ ALTER TABLE ONLY public.camas
 
 
 --
--- TOC entry 4832 (class 2606 OID 17001)
+-- TOC entry 4834 (class 2606 OID 17001)
 -- Name: camas camas_paciente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -802,7 +827,7 @@ ALTER TABLE ONLY public.camas
 
 
 --
--- TOC entry 4828 (class 2606 OID 16963)
+-- TOC entry 4830 (class 2606 OID 16963)
 -- Name: derivaciones derivaciones_medico_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -811,7 +836,7 @@ ALTER TABLE ONLY public.derivaciones
 
 
 --
--- TOC entry 4829 (class 2606 OID 16958)
+-- TOC entry 4831 (class 2606 OID 16958)
 -- Name: derivaciones derivaciones_paciente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -820,7 +845,7 @@ ALTER TABLE ONLY public.derivaciones
 
 
 --
--- TOC entry 4835 (class 2606 OID 17050)
+-- TOC entry 4837 (class 2606 OID 17050)
 -- Name: emergencias emergencias_cama_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -829,7 +854,7 @@ ALTER TABLE ONLY public.emergencias
 
 
 --
--- TOC entry 4830 (class 2606 OID 16982)
+-- TOC entry 4832 (class 2606 OID 16982)
 -- Name: habitaciones habitaciones_ala_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -838,7 +863,7 @@ ALTER TABLE ONLY public.habitaciones
 
 
 --
--- TOC entry 4833 (class 2606 OID 17029)
+-- TOC entry 4835 (class 2606 OID 17029)
 -- Name: internaciones internaciones_habitacion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -847,7 +872,7 @@ ALTER TABLE ONLY public.internaciones
 
 
 --
--- TOC entry 4834 (class 2606 OID 17024)
+-- TOC entry 4836 (class 2606 OID 17024)
 -- Name: internaciones internaciones_paciente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -856,7 +881,7 @@ ALTER TABLE ONLY public.internaciones
 
 
 --
--- TOC entry 4827 (class 2606 OID 16936)
+-- TOC entry 4829 (class 2606 OID 16936)
 -- Name: turnos turnos_paciente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -864,7 +889,7 @@ ALTER TABLE ONLY public.turnos
     ADD CONSTRAINT turnos_paciente_id_fkey FOREIGN KEY (paciente_id) REFERENCES public.pacientes(id) ON DELETE CASCADE;
 
 
--- Completed on 2025-06-02 19:49:34
+-- Completed on 2025-06-08 19:37:00
 
 --
 -- PostgreSQL database dump complete

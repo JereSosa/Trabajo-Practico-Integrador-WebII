@@ -878,3 +878,14 @@ const PUERTO = process.env.PUERTO || 3000;
 app.listen(PUERTO, () => {
   console.log(`Servidor corriendo en http://localhost:${PUERTO}`);
 });
+
+// Test de conexión a la base de datos
+app.get("/test-db", async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT NOW()");
+    res.send(`Conexión OK! Fecha actual: ${rows[0].now}`);
+  } catch (err) {
+    console.error("Error en conexión:", err);
+    res.status(500).send("Error en la conexión a la base de datos");
+  }
+});
