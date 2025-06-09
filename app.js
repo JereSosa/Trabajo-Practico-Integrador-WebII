@@ -459,15 +459,25 @@ app.post("/turno-reemplazar", async (req, res) => {
 
 //post de turno confirmado
 app.post("/turno-confirmado", async (req, res) => {
-  const {
-    paciente_id, motivo_turno
-  } = req.body;
+  const { paciente_id, motivo_turno } = req.body;
 
   try {
-    await pool.query(
-      `INSERT INTO turnos (paciente_id, motivo_turno, fecha) VALUES ($1, $2, NOW())`,
-      [paciente_id, motivo_turno]
-    );
+    const existente = await pool.query(`
+      SELECT id FROM turnos WHERE paciente_id = $1 ORDER BY fecha DESC LIMIT 1
+    `, [paciente_id]);
+
+    if (existente.rowCount > 0) {
+      // Actualiza el turno más reciente en vez de crear uno nuevo
+      await pool.query(`
+        UPDATE turnos SET motivo_turno = $1, fecha = NOW() WHERE id = $2
+      `, [motivo_turno, existente.rows[0].id]);
+    } else {
+      // Si no hay turno previo, lo crea
+      await pool.query(
+        `INSERT INTO turnos (paciente_id, motivo_turno, fecha) VALUES ($1, $2, NOW())`,
+        [paciente_id, motivo_turno]
+      );
+    }
 
     res.redirect("/inicio?success=turno_reemplazado");
   } catch (error) {
@@ -499,25 +509,30 @@ app.post('/derivacion-nuevo', async (req, res) => {
   const { paciente_id, medico_id, motivo_derivacion, especialidad_derivacion } = req.body;
 
   try {
-    // Verificamos si ya existe una derivación para este paciente
+    // Actualizar o insertar la derivación
     const existente = await pool.query(`
       SELECT id FROM derivaciones WHERE paciente_id = $1
     `, [paciente_id]);
 
     if (existente.rowCount > 0) {
-      // Actualizar derivación existente
       await pool.query(`
         UPDATE derivaciones 
         SET medico_id = $1, motivo_derivacion = $2, especialidad_derivacion = $3, creado_en = NOW()
         WHERE paciente_id = $4
       `, [medico_id, motivo_derivacion, especialidad_derivacion, paciente_id]);
     } else {
-      // Crear nueva derivación
       await pool.query(`
         INSERT INTO derivaciones (paciente_id, medico_id, motivo_derivacion, especialidad_derivacion, creado_en)
         VALUES ($1, $2, $3, $4, NOW())
       `, [paciente_id, medico_id, motivo_derivacion, especialidad_derivacion]);
     }
+
+    // Además, actualizar el último turno con el nuevo motivo derivado
+    await pool.query(`
+      UPDATE turnos SET motivo_turno = $1, fecha = NOW()
+      WHERE paciente_id = $2 
+      AND fecha = (SELECT MAX(fecha) FROM turnos WHERE paciente_id = $2)
+    `, [motivo_derivacion, paciente_id]);
 
     res.sendStatus(200);
   } catch (err) {
